@@ -3,14 +3,16 @@ using System.Reflection;
 
 namespace ClassTracker
 {
-    public class PropertyItem
+    public class TrackingItem
     {
-        public bool HasChanged { get; set; }
+        public readonly MemberTypes ItemType;
         public readonly object Value;
+    
  
-        public PropertyItem(object value)
+        public TrackingItem(object value, MemberTypes itemType)
         {
             Value = value;
+            ItemType = itemType;
         }
     }
 }
