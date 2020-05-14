@@ -5,9 +5,8 @@ namespace ClassTracker
 {
     public class TrackingItem
     {
-        public readonly MemberInfo Info;
-        public readonly object Value;
-    
+        public MemberInfo Info { get; }
+        public object Value { get; }    
  
         public TrackingItem(object value, MemberInfo info)
         {

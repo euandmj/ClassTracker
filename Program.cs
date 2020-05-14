@@ -20,20 +20,11 @@ namespace ClassTracker
             apple2.age = 99;
             //var l = apple2.CheckChanged();
 
-            apple1 = apple2.AddTo(apple1);
+            apple2.AddTo(apple1);
         }
     }
 
-    // i dont like this. Remove?
-    public interface IPropertyList<T>
-    {
-        ClassTracker<T> PropertyList { get; }
-        void AddProperties();
-        T AddTo(T b);
-    }
-
     public class Apple
-        : IPropertyList<Apple>
     {
         public ClassTracker<Apple> PropertyList { get; }
         public Color skinColor { get; set; }

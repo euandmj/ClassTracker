@@ -54,7 +54,7 @@ namespace ClassTracker
         {
             // validate input
             if (!(typeof(T).GetProperty(name) is PropertyInfo info))
-                throw new ArgumentException($"associated type {typeof(T)} does not contain a property named {name}", nameof(name));
+                throw new ArgumentException($"associated type {typeof(T)} does not contain a public property named {name}", nameof(name));
             if(info.PropertyType != value.GetType())
                 throw new ArgumentException($"types do not match.");
             AddItem(name, new TrackingItem(value, info));
@@ -69,11 +69,20 @@ namespace ClassTracker
         {
             //validate input
             if (!(typeof(T).GetField(name) is FieldInfo info))
-                throw new ArgumentException($"associated type {typeof(T)} does not contain a field named {name}", nameof(name));
+                throw new ArgumentException($"associated type {typeof(T)} does not contain a public field named {name}", nameof(name));
             if(info.FieldType != value.GetType())
                 throw new ArgumentException($"types do not match.");
             AddItem(name, new TrackingItem(value, info));
         }
+
+        // public void AddPrivateField(string name, object value)
+        // {
+        //     if (!(typeof(T).GetField(name, BindingFlags.Instance | BindingFlags.NonPublic) is FieldInfo info))
+        //         throw new ArgumentException($"associated type {typeof(T)} does not contain a private field named {name}", nameof(name));
+        //     if(info.FieldType != value.GetType())
+        //         throw new ArgumentException("types do not match.");
+        //     AddItem(name, new TrackingItem(value, info));
+        // }
 
         /// <summary>
         /// Based upon whats changed in A, copy A's changed values to B
@@ -88,6 +97,7 @@ namespace ClassTracker
             {
                 SetValue(b, name, value);
             }
+            // should this even return? we modify the ref b
             return b;
         }
 
