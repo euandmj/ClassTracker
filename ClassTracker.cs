@@ -23,18 +23,18 @@ namespace ClassTracker
 
         private object GetValue(T src, string name, TrackingItem item)
         {
-            var value = item.ItemType switch
+            var value = item.Info.MemberType switch
             {
                 MemberTypes.Property => typeof(T).GetProperty(name).GetValue(src),
                 MemberTypes.Field    => typeof(T).GetField(name).GetValue(src),
-                _                    => throw new NotSupportedException($"{nameof(MemberTypes)} {item.ItemType} is not supported")
+                _                    => throw new NotSupportedException($"{nameof(MemberTypes)} {item.Info.MemberType} is not supported")
             };
             return value;
         }
 
         private void SetValue(T obj, string name, object value)
         {
-            switch(_properties[name].ItemType)
+            switch(_properties[name].Info.MemberType)
             {
                 case MemberTypes.Property:
                     typeof(T).GetProperty(name).SetValue(obj, value);
@@ -45,22 +45,34 @@ namespace ClassTracker
             }
         }
 
+        /// <summary>
+        /// Records the value of a property
+        /// </summary>
+        /// <param name="name">The name of the objects property</param>
+        /// <param name="value">The value of this property</param>
         public void AddProperty(string name, object value)
         {
             // validate input
-            if (typeof(T).GetProperty(name) is null)
+            if (!(typeof(T).GetProperty(name) is PropertyInfo info))
                 throw new ArgumentException($"associated type {typeof(T)} does not contain a property named {name}", nameof(name));
-
-            AddItem(name, new TrackingItem(value, MemberTypes.Property));
+            if(info.PropertyType != value.GetType())
+                throw new ArgumentException($"types do not match.");
+            AddItem(name, new TrackingItem(value, info));
         }
 
+        /// <summary>
+        /// Records the value of a field
+        /// </summary>
+        /// <param name="name">The name of the objects field</param>
+        /// <param name="value">The value of this field</param>
         public void AddField(string name, object value)
         {
             //validate input
-            if (typeof(T).GetField(name) is null)
+            if (!(typeof(T).GetField(name) is FieldInfo info))
                 throw new ArgumentException($"associated type {typeof(T)} does not contain a field named {name}", nameof(name));
-
-            AddItem(name, new TrackingItem(value, MemberTypes.Field));
+            if(info.FieldType != value.GetType())
+                throw new ArgumentException($"types do not match.");
+            AddItem(name, new TrackingItem(value, info));
         }
 
         /// <summary>

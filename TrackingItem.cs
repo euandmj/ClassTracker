@@ -5,14 +5,14 @@ namespace ClassTracker
 {
     public class TrackingItem
     {
-        public readonly MemberTypes ItemType;
+        public readonly MemberInfo Info;
         public readonly object Value;
     
  
-        public TrackingItem(object value, MemberTypes itemType)
+        public TrackingItem(object value, MemberInfo info)
         {
             Value = value;
-            ItemType = itemType;
+            Info = info ?? throw new ArgumentNullException(nameof(info));
         }
     }
 }
