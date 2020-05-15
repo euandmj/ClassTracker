@@ -1,48 +1,35 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Linq;
 
 namespace ClassTracker
 {
     public class ClassTracker<T>
     {
-        private readonly Dictionary<string, TrackingItem> _properties;
+        private readonly HashSet<TrackingItem<T>> _properties;
 
         public ClassTracker()
         {
-            _properties = new Dictionary<string, TrackingItem>();
+            _properties = new HashSet<TrackingItem<T>>();
         }
 
-        private void AddItem(string name, TrackingItem item)
+        private void AddItem(string name, TrackingItem<T> item)
         {
-            if (_properties.ContainsKey(name))
+            if (_properties.Any(x => x.Name == name))
                 throw new ArgumentException("multiple items of the same name are not supported.", nameof(name));
 
-            _properties[name] = item;
+            _properties.Add(item);
         }
 
-        private object GetValue(T src, string name, TrackingItem item)
+        private IEnumerable<(object newValue, TrackingItem<T>)> GetChanged(T obj)
         {
-            // T does not need to be validated if it contains the members since they are validated upon add.
-            return item.Info.MemberType switch
+            foreach(var item in _properties)
             {
-                MemberTypes.Property => typeof(T).GetProperty(name).GetValue(src),
-                MemberTypes.Field    => typeof(T).GetField(name).GetValue(src),
-                _                    => throw new NotSupportedException($"{nameof(MemberTypes)} {item.Info.MemberType} is not supported")
-            };
-        }
+                object objVal = item.GetValue(obj);
 
-        private void SetValue(T obj, string name, object value)
-        {
-            // T does not need to be validated if it contains the members since they are validated upon add.
-            switch(_properties[name].Info.MemberType)
-            {
-                case MemberTypes.Property:
-                    typeof(T).GetProperty(name).SetValue(obj, value);
-                    break;
-                case MemberTypes.Field:
-                    typeof(T).GetField(name).SetValue(obj, value);
-                    break;
+                if(!object.Equals(objVal, item.Value))
+                    yield return (objVal, item);
             }
         }
 
@@ -58,7 +45,7 @@ namespace ClassTracker
                 throw new ArgumentException($"associated type {typeof(T)} does not contain a public property named {name}", nameof(name));
             if(info.PropertyType != value.GetType())
                 throw new ArgumentException($"types do not match.");
-            AddItem(name, new TrackingItem(value, info));
+            AddItem(name, new TrackingItem<T>(value, info));
         }
 
         /// <summary>
@@ -73,7 +60,7 @@ namespace ClassTracker
                 throw new ArgumentException($"associated type {typeof(T)} does not contain a public field named {name}", nameof(name));
             if(info.FieldType != value.GetType())
                 throw new ArgumentException($"types do not match.");
-            AddItem(name, new TrackingItem(value, info));
+            AddItem(name, new TrackingItem<T>(value, info));
         }
 
         // public void AddPrivateField(string name, object value)
@@ -94,9 +81,9 @@ namespace ClassTracker
         public T AddTo(T a, T b)
         {
             // validate input
-            foreach (var (name, value) in CheckChanged(a))
+            foreach (var (newVal, item) in GetChanged(a))
             {
-                SetValue(b, name, value);
+                item.SetValue(ref b, newVal);
             }
             // should this even return? we modify the ref b
             return b;
@@ -106,21 +93,15 @@ namespace ClassTracker
         /// Compare the stored values for the object
         /// </summary>
         /// <param name="obj">Object to check against</param>
-        /// <returns>An enumerable of the properties that have changed and their values</returns>
+        /// <returns>An enumerable of the properties that have changed and their initial values</returns>
         public IEnumerable<(string name, object value)> CheckChanged(T obj)
         {
             if (obj is null)
                 throw new ArgumentNullException(nameof(obj));
 
-            foreach (var kvp in _properties)
-            {
-                var objValue = GetValue(obj, kvp.Key, kvp.Value);
+            var changed = GetChanged(obj);
 
-                if (!object.Equals(objValue, kvp.Value.Value))
-                {
-                    yield return (kvp.Key, objValue);
-                }
-            }
+            return changed.Select(x => (x.Item2.Name, x.Item2.Value));
         }
     }
 }
