@@ -23,17 +23,18 @@ namespace ClassTracker
 
         private object GetValue(T src, string name, TrackingItem item)
         {
-            var value = item.Info.MemberType switch
+            // T does not need to be validated if it contains the members since they are validated upon add.
+            return item.Info.MemberType switch
             {
                 MemberTypes.Property => typeof(T).GetProperty(name).GetValue(src),
                 MemberTypes.Field    => typeof(T).GetField(name).GetValue(src),
                 _                    => throw new NotSupportedException($"{nameof(MemberTypes)} {item.Info.MemberType} is not supported")
             };
-            return value;
         }
 
         private void SetValue(T obj, string name, object value)
         {
+            // T does not need to be validated if it contains the members since they are validated upon add.
             switch(_properties[name].Info.MemberType)
             {
                 case MemberTypes.Property:
@@ -111,7 +112,6 @@ namespace ClassTracker
             if (obj is null)
                 throw new ArgumentNullException(nameof(obj));
 
-            // T does not need to be validated if it contains the members since they are validated upon add.
             foreach (var kvp in _properties)
             {
                 var objValue = GetValue(obj, kvp.Key, kvp.Value);
