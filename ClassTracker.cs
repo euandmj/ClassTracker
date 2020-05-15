@@ -24,11 +24,11 @@ namespace ClassTracker
 
         private IEnumerable<(object newValue, TrackingItem<T>)> GetChanged(T obj)
         {
-            foreach(var item in _properties)
+            foreach (var item in _properties)
             {
                 object objVal = item.GetValue(obj);
 
-                if(!object.Equals(objVal, item.Value))
+                if (!object.Equals(objVal, item.Value))
                     yield return (objVal, item);
             }
         }
@@ -43,7 +43,7 @@ namespace ClassTracker
             // validate input
             if (!(typeof(T).GetProperty(name) is PropertyInfo info))
                 throw new ArgumentException($"associated type {typeof(T)} does not contain a public property named {name}", nameof(name));
-            if(info.PropertyType != value.GetType())
+            if (info.PropertyType != value.GetType())
                 throw new ArgumentException($"types do not match.");
             AddItem(name, new TrackingItem<T>(value, info));
         }
@@ -58,7 +58,7 @@ namespace ClassTracker
             //validate input
             if (!(typeof(T).GetField(name) is FieldInfo info))
                 throw new ArgumentException($"associated type {typeof(T)} does not contain a public field named {name}", nameof(name));
-            if(info.FieldType != value.GetType())
+            if (info.FieldType != value.GetType())
                 throw new ArgumentException($"types do not match.");
             AddItem(name, new TrackingItem<T>(value, info));
         }
