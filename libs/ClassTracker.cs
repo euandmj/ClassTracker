@@ -18,7 +18,7 @@ namespace ClassTracker
         {
             if (_properties.Any(x => x.Name == name))
                 throw new ArgumentException("multiple items of the same name are not supported.", nameof(name));
-
+            
             _properties.Add(item);
         }
 
@@ -63,6 +63,22 @@ namespace ClassTracker
             AddItem(name, new TrackingItem<T>(value, info));
         }
 
+        /// <summary>
+        /// Registers all public members of the object that have a <see cref="ClassTracker.TrackedItemAttribute"/> attribute
+        /// </summary>
+        public void Register(T obj)
+        {
+            var members = typeof(T).GetMembers();
+
+            foreach(var mem in members)
+            {               
+                var attribute = mem.GetCustomAttribute(typeof(TrackedItemAttribute));
+
+                if(attribute is null) continue;
+                AddItem(mem.Name, new TrackingItem<T>(obj, mem));                
+            }
+        }
+
         // public void AddPrivateField(string name, object value)
         // {
         //     if (!(typeof(T).GetField(name, BindingFlags.Instance | BindingFlags.NonPublic) is FieldInfo info))
@@ -78,15 +94,13 @@ namespace ClassTracker
         /// <param name="a">object to copy from</param>
         /// <param name="b">object to copy to</param>
         /// <returns>A modified version of B</returns>
-        public T AddTo(T a, T b)
+        public void AddTo(T a, T b)
         {
             // validate input
             foreach (var (newVal, item) in GetChanged(a))
             {
                 item.SetValue(ref b, newVal);
             }
-            // should this even return? we modify the ref b
-            return b;
         }
 
         /// <summary>

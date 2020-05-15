@@ -1,5 +1,4 @@
 using System;
-using System.Linq;
 using System.Reflection;
 
 namespace ClassTracker
@@ -40,8 +39,8 @@ namespace ClassTracker
             return Info.MemberType switch
             {
                 MemberTypes.Property => typeof(T).GetProperty(Name).GetValue(src),
-                MemberTypes.Field => typeof(T).GetField(Name).GetValue(src),
-                _ => throw new NotSupportedException($"{nameof(MemberTypes)} {Info.MemberType} is not supported")
+                MemberTypes.Field    => typeof(T).GetField(Name).GetValue(src),
+                _                    => throw new NotSupportedException($"{nameof(MemberTypes)} {Info.MemberType} is not supported")
             };
         }
 
