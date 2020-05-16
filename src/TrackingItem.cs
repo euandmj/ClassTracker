@@ -7,7 +7,7 @@ namespace ClassTracker
     {
         protected MemberInfo Info { get; }
         public string Name { get => Info.Name; }
-        public object Value { get; }
+        public object? Value { get; }
 
         public TrackingItem(object value, MemberInfo info)
         {

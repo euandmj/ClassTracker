@@ -17,7 +17,7 @@ namespace ClassTracker
         private void AddItem(string name, TrackingItem<T> item)
         {
             if (_properties.Any(x => x.Name == name))
-                throw new ArgumentException("multiple items of the same name are not supported.", nameof(name));
+                throw new ArgumentException("multiple items of the same name are not supported. Name: " + name, nameof(name));
             
             _properties.Add(item);
         }
@@ -28,7 +28,7 @@ namespace ClassTracker
             {
                 object objVal = item.GetValue(obj);
 
-                if (!object.Equals(objVal, item.Value))
+                if (!Equals(objVal, item.Value))
                     yield return (objVal, item);
             }
         }
@@ -64,7 +64,7 @@ namespace ClassTracker
         }
 
         /// <summary>
-        /// Registers all public members of the object that have a <see cref="ClassTracker.TrackedItemAttribute"/> attribute
+        /// Registers all public members of the object that have a <see cref="TrackedItemAttribute"/>
         /// </summary>
         public void Register(T obj)
         {
