@@ -1,0 +1,5 @@
+bin/
+obj/
+.vscode/
+.vs/ClassTracker/DesignTimeBuild/.dtbcache.v2
+.vs/ClassTracker/v16/.suo

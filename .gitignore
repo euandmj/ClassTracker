@@ -1,3 +1,8 @@
-bin/
-obj/
 .vscode/
+Examples/bin/
+Examples/obj/
+.vs/
+ClassTracker/.vs/
+ClassTracker/bin/
+ClassTracker/obj/
+
