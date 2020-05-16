@@ -1,4 +1,4 @@
-bin/
+Debug/
 obj/
 .vscode/
 ClassTracker/.vscode/
@@ -7,3 +7,6 @@ ClassTracker/.vs/
 .vs/ClassTracker/v16/
 Examples/bin/
 Examples/obj/
+*.user
+ClassTracker/Properties/
+ClassTracker/bin/Release/netcoreapp3.1/

@@ -3,6 +3,12 @@
   <PropertyGroup>
     <OutputType>Library</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
+    <Description>Apply attributes to public members and simply transfer registered states to other objects of the same inherited Type</Description>
+    <Authors>euandmj</Authors>
+    <Company />
+    <PackageProjectUrl>https://github.com/euandmj/ClassTracker</PackageProjectUrl>
+    <PackageTags></PackageTags>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
 
 </Project>
