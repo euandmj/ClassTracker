@@ -1,9 +1,9 @@
-Examples/obj/
 bin/
 obj/
 .vscode/
 ClassTracker/.vscode/
-Examples/bin/
-Examples/obj/
+ClassTracker/.vs/
 .vs/ClassTracker/DesignTimeBuild/
 .vs/ClassTracker/v16/
+Examples/bin/
+Examples/obj/
