@@ -5,6 +5,7 @@ namespace ClassTracker
 {
     public class TrackingItem<T>
     {
+        protected BindingFlags BindingFlags = BindingFlags.Instance | BindingFlags.Public;
         protected MemberInfo Info { get; }
         public string Name { get => Info.Name; }
         public object? Value { get; }
@@ -15,6 +16,11 @@ namespace ClassTracker
             Info = info ?? throw new ArgumentNullException(nameof(info));
         }
 
+        public TrackingItem(object value, MemberInfo info, BindingFlags flags)
+            : this(value, info)
+            => (BindingFlags) 
+            = (flags);
+
         public void SetValue(ref T obj, object value)
         {
             if (obj is null)
@@ -23,11 +29,13 @@ namespace ClassTracker
             switch (Info.MemberType)
             {
                 case MemberTypes.Property:
-                    typeof(T).GetProperty(Name).SetValue(obj, value);
+                    ((PropertyInfo)Info).SetValue(obj, value);
                     break;
                 case MemberTypes.Field:
-                    typeof(T).GetField(Name).SetValue(obj, value);
+                    ((FieldInfo)Info).SetValue(obj, value);
                     break;
+                default:
+                    throw new InvalidMemberException(typeof(T), BindingFlags, Name);
             }
         }
 
@@ -38,9 +46,9 @@ namespace ClassTracker
 
             return Info.MemberType switch
             {
-                MemberTypes.Property => typeof(T).GetProperty(Name).GetValue(src),
-                MemberTypes.Field    => typeof(T).GetField(Name).GetValue(src),
-                _                    => throw new NotSupportedException($"{nameof(MemberTypes)} {Info.MemberType} is not supported")
+                MemberTypes.Property => ((PropertyInfo)Info).GetValue(src),
+                MemberTypes.Field    => ((FieldInfo)Info).GetValue(src),
+                _                    => throw new InvalidMemberException(typeof(T), BindingFlags, Name)
             };
         }
 

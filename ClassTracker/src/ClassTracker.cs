@@ -18,7 +18,7 @@ namespace ClassTracker
         {
             if (_properties.Any(x => x.Name == name))
                 throw new ArgumentException("multiple items of the same name are not supported. Name: " + name, nameof(name));
-            
+
             _properties.Add(item);
         }
 
@@ -34,59 +34,29 @@ namespace ClassTracker
         }
 
         /// <summary>
-        /// Records the value of a property
-        /// </summary>
-        /// <param name="name">The name of the objects property</param>
-        /// <param name="value">The value of this property</param>
-        public void AddProperty(string name, object value)
-        {
-            // validate input
-            if (!(typeof(T).GetProperty(name) is PropertyInfo info))
-                throw new ArgumentException($"associated type {typeof(T)} does not contain a public property named {name}", nameof(name));
-            if (info.PropertyType != value.GetType())
-                throw new ArgumentException($"types do not match.");
-            AddItem(name, new TrackingItem<T>(value, info));
-        }
-
-        /// <summary>
-        /// Records the value of a field
-        /// </summary>
-        /// <param name="name">The name of the objects field</param>
-        /// <param name="value">The value of this field</param>
-        public void AddField(string name, object value)
-        {
-            //validate input
-            if (!(typeof(T).GetField(name) is FieldInfo info))
-                throw new ArgumentException($"associated type {typeof(T)} does not contain a public field named {name}", nameof(name));
-            if (info.FieldType != value.GetType())
-                throw new ArgumentException($"types do not match.");
-            AddItem(name, new TrackingItem<T>(value, info));
-        }
-
-        /// <summary>
         /// Registers all public members of the object that have a <see cref="TrackedItemAttribute"/>
         /// </summary>
         public void Register(T obj)
         {
-            var members = typeof(T).GetMembers();
+            if(obj is null)
+                throw new ArgumentNullException(nameof(obj));
 
-            foreach(var mem in members)
-            {               
-                var attribute = mem.GetCustomAttribute(typeof(TrackedItemAttribute));
+            const BindingFlags privateFlags = BindingFlags.Instance | BindingFlags.NonPublic;
 
-                if(attribute is null) continue;
-                AddItem(mem.Name, new TrackingItem<T>(obj, mem));                
+            // add public members
+            foreach (var mem in typeof(T).GetMembers())
+            {
+                if (mem.GetCustomAttributes(typeof(TrackedItemAttribute)).Any())
+                    AddItem(mem.Name, new TrackingItem<T>(obj, mem));
+            }
+
+            // add private members
+            foreach (var mem in typeof(T).GetMembers(privateFlags))
+            {
+                if (mem.GetCustomAttributes(typeof(TrackedItemAttribute)).Any())
+                    AddItem(mem.Name, new TrackingItem<T>(obj, mem, privateFlags));
             }
         }
-
-        // public void AddPrivateField(string name, object value)
-        // {
-        //     if (!(typeof(T).GetField(name, BindingFlags.Instance | BindingFlags.NonPublic) is FieldInfo info))
-        //         throw new ArgumentException($"associated type {typeof(T)} does not contain a private field named {name}", nameof(name));
-        //     if(info.FieldType != value.GetType())
-        //         throw new ArgumentException("types do not match.");
-        //     AddItem(name, new TrackingItem(value, info));
-        // }
 
         /// <summary>
         /// Based upon whats changed in A, copy A's changed values to B
