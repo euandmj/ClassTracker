@@ -10,3 +10,4 @@ Examples/obj/
 *.user
 ClassTracker/Properties/
 ClassTracker/bin/Release/netcoreapp3.1/
+/ClassTracker_Tests/bin/Release/netcoreapp3.1

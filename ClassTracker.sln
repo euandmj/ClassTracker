@@ -3,9 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30011.22
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ClassTracker", "ClassTracker/ClassTracker.csproj", "{E0045C19-C1F7-4981-90A3-39122418D1FA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ClassTracker", "ClassTracker\ClassTracker.csproj", "{E0045C19-C1F7-4981-90A3-39122418D1FA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Examples", "Examples\Examples.csproj", "{22ABA3C8-4747-4699-AA83-EF9A247DE1D4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Examples", "Examples\Examples.csproj", "{22ABA3C8-4747-4699-AA83-EF9A247DE1D4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClassTracker_Tests", "ClassTracker_Tests\ClassTracker_Tests.csproj", "{97B1AE0F-5652-47C2-B955-7BAC2C3C2F48}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{22ABA3C8-4747-4699-AA83-EF9A247DE1D4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{22ABA3C8-4747-4699-AA83-EF9A247DE1D4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{22ABA3C8-4747-4699-AA83-EF9A247DE1D4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{97B1AE0F-5652-47C2-B955-7BAC2C3C2F48}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{97B1AE0F-5652-47C2-B955-7BAC2C3C2F48}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{97B1AE0F-5652-47C2-B955-7BAC2C3C2F48}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{97B1AE0F-5652-47C2-B955-7BAC2C3C2F48}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
