@@ -14,6 +14,8 @@ namespace ClassTracker
             _properties = new HashSet<TrackingItem<T>>();
         }
 
+        public int TrackedCount { get => _properties.Count; }
+
         private void AddItem(string name, TrackingItem<T> item)
         {
             if (_properties.Any(x => x.Name == name))
@@ -34,7 +36,7 @@ namespace ClassTracker
         }
 
         /// <summary>
-        /// Registers all public members of the object that have a <see cref="TrackedItemAttribute"/>
+        /// Registers all public and private members of the object that have a <see cref="TrackedItemAttribute"/>
         /// </summary>
         public void Register(T obj)
         {
@@ -56,6 +58,11 @@ namespace ClassTracker
                 if (mem.GetCustomAttributes(typeof(TrackedItemAttribute)).Any())
                     AddItem(mem.Name, new TrackingItem<T>(obj, mem, privateFlags));
             }
+        }
+
+        public void Reset()
+        {
+            _properties.Clear();
         }
 
         /// <summary>

@@ -1,8 +1,10 @@
 using System;
+using System.Diagnostics;
 using System.Reflection;
 
 namespace ClassTracker
 {
+    [DebuggerDisplay("{Value}", Name="{Name}")]
     public class TrackingItem<T>
     {
         protected BindingFlags BindingFlags = BindingFlags.Instance | BindingFlags.Public;
@@ -10,14 +12,14 @@ namespace ClassTracker
         public string Name { get => Info.Name; }
         public object? Value { get; }
 
-        public TrackingItem(object value, MemberInfo info)
+        public TrackingItem(T src, MemberInfo info)
         {
-            Value = value;
             Info = info ?? throw new ArgumentNullException(nameof(info));
+            Value = GetValue(src);
         }
 
-        public TrackingItem(object value, MemberInfo info, BindingFlags flags)
-            : this(value, info)
+        public TrackingItem(T src, MemberInfo info, BindingFlags flags)
+            : this(src, info)
             => (BindingFlags) 
             = (flags);
 
