@@ -30,11 +30,6 @@ namespace ClassTracker
             {
                 object objVal = item.GetValue(obj);
 
-                if(item.Name == "PublicReadOnlyField")
-                    {
-                        _ =5;
-                    }
-
                 if (!Equals(objVal, item.Value))
                     yield return (objVal, item);
             }
