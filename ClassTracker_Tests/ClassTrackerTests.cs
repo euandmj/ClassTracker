@@ -36,14 +36,9 @@ namespace ClassTracker_Tests
         [Test]
         public void ClassTracker_ChangedPublic()
         {
-            var obj = new TestObject()
-            {
-                PublicField = 5,
-                PublicProperty = 5
-            };
+            var obj = new TestObject();
 
             Tracker.Register(obj);
-
 
             obj.PublicField = 10;
             obj.PublicProperty = 10;
@@ -59,7 +54,7 @@ namespace ClassTracker_Tests
         [Test]
         public void ClassTracker_ChangedPrivate()
         {
-            var obj = new TestObject(5);
+            var obj = new TestObject();
 
             Tracker.Register(obj);
 
@@ -70,6 +65,28 @@ namespace ClassTracker_Tests
             Assert.IsTrue(changed.Any(x => x.name == "_PrivateField"),    message:"Private field failed tracking");
             Assert.IsTrue(changed.Any(x => x.name == "_PrivateProperty"), message:"Private property failed tracking");
             
+            Tracker.Reset();
+        }
+
+        [Test]
+        public void ClassTracker_AddTo()
+        {
+            var A = new TestObject()
+            {
+                PublicField = 100
+            };
+            var B = new TestObject();
+
+            Tracker.Register(A);
+            
+            A.SetPrivate(20);
+            A.PublicProperty = 20;
+
+            Tracker.AssignTo(A, B);
+
+            Assert.AreEqual(A.PublicProperty, B.PublicProperty);
+            Assert.AreNotEqual(A.PublicField, B.PublicField);
+
             Tracker.Reset();
         }
     }

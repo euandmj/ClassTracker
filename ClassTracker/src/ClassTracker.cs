@@ -30,6 +30,11 @@ namespace ClassTracker
             {
                 object objVal = item.GetValue(obj);
 
+                if(item.Name == "PublicReadOnlyField")
+                    {
+                        _ =5;
+                    }
+
                 if (!Equals(objVal, item.Value))
                     yield return (objVal, item);
             }
@@ -71,7 +76,7 @@ namespace ClassTracker
         /// <param name="a">object to copy from</param>
         /// <param name="b">object to copy to</param>
         /// <returns>A modified version of B</returns>
-        public void AddTo(T a, T b)
+        public void AssignTo(T a, T b)
         {
             // validate input
             foreach (var (newVal, item) in GetChanged(a))

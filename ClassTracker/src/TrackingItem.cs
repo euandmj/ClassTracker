@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics;
 using System.Reflection;
+using ClassTracker.Exceptions;
 
 namespace ClassTracker
 {
@@ -10,12 +11,21 @@ namespace ClassTracker
         protected BindingFlags BindingFlags = BindingFlags.Instance | BindingFlags.Public;
         protected MemberInfo Info { get; }
         public string Name { get => Info.Name; }
-        public object? Value { get; }
+        public object Value { get; }
 
         public TrackingItem(T src, MemberInfo info)
         {
             Info = info ?? throw new ArgumentNullException(nameof(info));
             Value = GetValue(src);
+
+            if(info is PropertyInfo pi)
+                if(!pi.CanWrite || !pi.CanRead)
+                    throw new MemberInfoException(typeof(T),
+                    info, "Member cannot be readonly");
+            else if(info is FieldInfo fi)
+                if(fi.IsInitOnly)
+                    throw new MemberInfoException(typeof(T),
+                    info, "Member cannot be readonly");
         }
 
         public TrackingItem(T src, MemberInfo info, BindingFlags flags)
@@ -28,16 +38,23 @@ namespace ClassTracker
             if (obj is null)
                 throw new ArgumentNullException(nameof(obj));
 
-            switch (Info.MemberType)
+            try
             {
-                case MemberTypes.Property:
-                    ((PropertyInfo)Info).SetValue(obj, value);
-                    break;
-                case MemberTypes.Field:
-                    ((FieldInfo)Info).SetValue(obj, value);
-                    break;
-                default:
-                    throw new InvalidMemberException(typeof(T), BindingFlags, Name);
+                switch (Info.MemberType)
+                {
+                    case MemberTypes.Property:
+                        ((PropertyInfo)Info).SetValue(obj, value);
+                        break;
+                    case MemberTypes.Field:
+                        ((FieldInfo)Info).SetValue(obj, value);
+                        break;
+                    default:
+                        throw new InvalidMemberTypeException(typeof(T), Info.MemberType, Name, "Unsupported MemberInfo type");
+                }
+            }
+            catch(TargetException)
+            {
+                throw new MemberInfoException(typeof(T), Info, $"A member \"{Name}\" in {typeof(T)} was unable to be set via the MemberInfo");
             }
         }
 
@@ -46,12 +63,19 @@ namespace ClassTracker
             if (src is null)
                 throw new ArgumentNullException(nameof(src));
 
-            return Info.MemberType switch
+            try
             {
-                MemberTypes.Property => ((PropertyInfo)Info).GetValue(src),
-                MemberTypes.Field    => ((FieldInfo)Info).GetValue(src),
-                _                    => throw new InvalidMemberException(typeof(T), BindingFlags, Name)
-            };
+                return Info.MemberType switch
+                {
+                    MemberTypes.Property => ((PropertyInfo)Info).GetValue(src),
+                    MemberTypes.Field    => ((FieldInfo)Info).GetValue(src),
+                    _                    => throw new InvalidMemberTypeException(typeof(T), Info.MemberType, Name, "Unsupported MemberInfo type")
+                };
+            }
+            catch(TargetException)
+            {
+                throw new MemberInfoException(typeof(T), Info, $"A member \"{Name}\" in {typeof(T)} was unable to be Get via the MemberInfo");
+            }
         }
 
         public override int GetHashCode() => Name.GetHashCode();
