@@ -38,6 +38,7 @@ namespace ClassTracker
         /// <summary>
         /// Registers all public and private members of the object that have a <see cref="TrackedItemAttribute"/>
         /// </summary>
+        /// <exception cref="MemberInfoException">If the object has a non-mutatable attributed member</exception>
         public void Register(T obj)
         {
             if(obj is null)
