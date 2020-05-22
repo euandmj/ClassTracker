@@ -1,17 +1,18 @@
 using System.Linq;
 using NUnit.Framework;
 using ClassTracker;
+
 namespace ClassTracker_Tests
 {
     [TestFixture]
     public class ClassTracker_Tests
     {
-        private ClassTracker<TestObject> Tracker;
+        private ClassTracker<ValidTestObject> Tracker;
 
         [SetUp]
         public void Setup()
         {
-            Tracker = new ClassTracker<TestObject>();
+            Tracker = new ClassTracker<ValidTestObject>();
         }
 
         [TearDown]
@@ -23,7 +24,7 @@ namespace ClassTracker_Tests
         [Test]
         public void ClassTracker_Register()
         {
-            var obj = new TestObject();
+            var obj = new ValidTestObject();
 
             Tracker.Register(obj);
 
@@ -35,7 +36,7 @@ namespace ClassTracker_Tests
         [Test]
         public void ClassTracker_ChangedPublic()
         {
-            var obj = new TestObject();
+            var obj = new ValidTestObject();
 
             Tracker.Register(obj);
 
@@ -53,7 +54,7 @@ namespace ClassTracker_Tests
         [Test]
         public void ClassTracker_ChangedPrivate()
         {
-            var obj = new TestObject();
+            var obj = new ValidTestObject();
 
             Tracker.Register(obj);
 
@@ -70,11 +71,11 @@ namespace ClassTracker_Tests
         [Test]
         public void ClassTracker_AddTo()
         {
-            var A = new TestObject()
+            var A = new ValidTestObject()
             {
                 PublicField = 100
             };
-            var B = new TestObject();
+            var B = new ValidTestObject();
 
             Tracker.Register(A);
             
@@ -92,7 +93,7 @@ namespace ClassTracker_Tests
         [Test]
         public void ClassTracker_ResetTracker()
         {
-            var a = new TestObject();
+            var a = new ValidTestObject();
             
             Tracker.Register(a);
 
@@ -109,11 +110,56 @@ namespace ClassTracker_Tests
 
         [Test]
         public void ClassTracker_ResetDefaults()
-        {}
+        {
+            const int @default = 10;
+            
+            var a = new ValidTestObject()
+            {
+                PublicField = @default,
+                PublicProperty = @default
+            };
+
+            Tracker.Register(a);
+
+            // change object
+            a.PublicField = @default * 2;
+            a.PublicProperty = @default * 2;
+
+            Tracker.ResetDefaults(a);
+
+            Assert.IsTrue(a.PublicField == @default,    message: "Public field did not reset");
+            Assert.IsTrue(a.PublicProperty == @default, message: "Public property did not reset");
+
+            Tracker.ResetTracker();
+        }
 
         [Test]
         public void ClassTracker_BlindAssignTo()
-        {}
+        {
+            var a = new ValidTestObject()
+            {
+                PublicField = 5,
+                PublicProperty = 5
+            };
+            a.SetPrivate(5);
 
+            var b = new ValidTestObject()
+            {
+                PublicField = 3,
+                PublicProperty = 3
+            };
+            b.SetPrivate(3);
+
+            Tracker.Register(a);
+
+            // set A into B blindly
+            // even though not changed, A state should be set to B
+            Tracker.BlindAssignTo(a, b);
+
+            Assert.AreEqual(a.PublicField, b.PublicField);
+            Assert.AreEqual(a.PublicProperty, b.PublicProperty);
+
+            Tracker.ResetTracker();
+        }
     }
 }

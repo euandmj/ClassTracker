@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Linq;
+using ClassTracker.Extensions;
 
 namespace ClassTracker
 {
@@ -49,14 +50,14 @@ namespace ClassTracker
             // add public members
             foreach (var mem in typeof(T).GetMembers())
             {
-                if (mem.GetCustomAttributes(typeof(TrackedItemAttribute)).Any())
+                if (mem.HasAttribute<TrackedItemAttribute>())
                     AddItem(mem.Name, new TrackingItem<T>(obj, mem));
             }
 
             // add private members
             foreach (var mem in typeof(T).GetMembers(privateFlags))
             {
-                if (mem.GetCustomAttributes(typeof(TrackedItemAttribute)).Any())
+                if (mem.HasAttribute<TrackedItemAttribute>())
                     AddItem(mem.Name, new TrackingItem<T>(obj, mem, privateFlags));
             }
         }

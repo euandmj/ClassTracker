@@ -26,6 +26,11 @@ namespace ClassTracker
                 if(fi.IsInitOnly)
                     throw new MemberInfoException(typeof(T),
                     info, "Member cannot be readonly");
+            else
+                // likely readonly field. 'RtFieldInfo' but i cant find reference to it in code
+                throw new MemberInfoException(typeof(T),
+                info, "Member cannot be readonly");
+            
         }
 
         public TrackingItem(T src, MemberInfo info, BindingFlags flags)
