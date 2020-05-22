@@ -9,6 +9,7 @@
     <PackageProjectUrl>https://github.com/euandmj/ClassTracker</PackageProjectUrl>
     <PackageTags></PackageTags>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Version>1.1.0</Version>
   </PropertyGroup>
 
 </Project>
