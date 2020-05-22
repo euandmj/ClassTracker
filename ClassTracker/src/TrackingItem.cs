@@ -5,18 +5,18 @@ using ClassTracker.Exceptions;
 
 namespace ClassTracker
 {
-    [DebuggerDisplay("{Value}", Name="{Name}")]
+    [DebuggerDisplay("{RecordedValue}", Name="{Name}")]
     public class TrackingItem<T>
     {
         protected BindingFlags BindingFlags = BindingFlags.Instance | BindingFlags.Public;
         protected MemberInfo Info { get; }
         public string Name { get => Info.Name; }
-        public object Value { get; }
+        public object RecordedValue { get; }
 
         public TrackingItem(T src, MemberInfo info)
         {
             Info = info ?? throw new ArgumentNullException(nameof(info));
-            Value = GetValue(src);
+            RecordedValue = GetValue(src);
 
             if(info is PropertyInfo pi)
                 if(!pi.CanWrite || !pi.CanRead)

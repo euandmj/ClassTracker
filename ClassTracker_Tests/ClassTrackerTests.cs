@@ -1,6 +1,5 @@
 using System.Linq;
 using NUnit.Framework;
-using FluentAssertions.Common;
 using ClassTracker;
 namespace ClassTracker_Tests
 {
@@ -30,7 +29,7 @@ namespace ClassTracker_Tests
 
             Assert.AreEqual(Tracker.TrackedCount, obj.NumTrackedItems);
 
-            Tracker.Reset();
+            Tracker.ResetTracker();
         }
 
         [Test]
@@ -48,7 +47,7 @@ namespace ClassTracker_Tests
             Assert.IsTrue(changed.Any(x => x.name == "PublicField"),    message:"Public field failed tracking");
             Assert.IsTrue(changed.Any(x => x.name == "PublicProperty"), message:"Public property failed tracking");
 
-            Tracker.Reset();
+            Tracker.ResetTracker();
         }
 
         [Test]
@@ -65,7 +64,7 @@ namespace ClassTracker_Tests
             Assert.IsTrue(changed.Any(x => x.name == "_PrivateField"),    message:"Private field failed tracking");
             Assert.IsTrue(changed.Any(x => x.name == "_PrivateProperty"), message:"Private property failed tracking");
             
-            Tracker.Reset();
+            Tracker.ResetTracker();
         }
 
         [Test]
@@ -87,7 +86,7 @@ namespace ClassTracker_Tests
             Assert.AreEqual(A.PublicProperty, B.PublicProperty);
             Assert.AreNotEqual(A.PublicField, B.PublicField);
 
-            Tracker.Reset();
+            Tracker.ResetTracker();
         }
     }
 }

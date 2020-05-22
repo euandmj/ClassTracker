@@ -30,7 +30,7 @@ namespace ClassTracker
             {
                 object objVal = item.GetValue(obj);
 
-                if (!Equals(objVal, item.Value))
+                if (!Equals(objVal, item.RecordedValue))
                     yield return (objVal, item);
             }
         }
@@ -60,9 +60,21 @@ namespace ClassTracker
             }
         }
 
-        public void Reset()
+        public void ResetTracker()
         {
             _properties.Clear();
+        }
+
+        /// <summary>
+        /// Resets an instance of T to its recorded values
+        /// </summary>
+        public T ResetDefaults(T obj)
+        {
+            foreach(var item in _properties)
+            {
+                item.SetValue(ref obj, item.RecordedValue);
+            }
+            return obj;
         }
 
         /// <summary>
@@ -70,13 +82,25 @@ namespace ClassTracker
         /// </summary>
         /// <param name="a">object to copy from</param>
         /// <param name="b">object to copy to</param>
-        /// <returns>A modified version of B</returns>
         public void AssignTo(T a, T b)
         {
             // validate input
             foreach (var (newVal, item) in GetChanged(a))
             {
                 item.SetValue(ref b, newVal);
+            }
+        }
+
+        /// <summary>
+        /// Applies all tracked properties from A in their current state, to B
+        /// </summary>
+        /// <param name="a">object to copy from</param>
+        /// <param name="b">object to copy to</param>
+        public void BlindAssignTo(T a, T b)
+        {
+            foreach(var item in _properties)
+            {
+                item.SetValue(ref b, item.GetValue(a));
             }
         }
 
@@ -92,7 +116,7 @@ namespace ClassTracker
 
             var changed = GetChanged(obj);
 
-            return changed.Select(x => (x.Item2.Name, x.Item2.Value));
+            return changed.Select(x => (x.Item2.Name, x.Item2.RecordedValue));
         }
     }
 }
