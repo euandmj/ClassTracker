@@ -88,5 +88,32 @@ namespace ClassTracker_Tests
 
             Tracker.ResetTracker();
         }
+
+        [Test]
+        public void ClassTracker_ResetTracker()
+        {
+            var a = new TestObject();
+            
+            Tracker.Register(a);
+
+            int count_after_reg = Tracker.TrackedCount;
+
+            Assert.IsTrue(count_after_reg > 0, message: "there should be tracked items");
+
+            Tracker.ResetTracker();
+
+            int count_after_reset = Tracker.TrackedCount;
+
+            Assert.IsTrue(count_after_reset == 0, message: "the tracker should not no items after reset");
+        }
+
+        [Test]
+        public void ClassTracker_ResetDefaults()
+        {}
+
+        [Test]
+        public void ClassTracker_BlindAssignTo()
+        {}
+
     }
 }
