@@ -9,23 +9,30 @@ namespace ClassTracker.Examples
     {
         public static void DoExample()
         {
-            Apple red_apple = new Apple()
-            {
-                Color = Color.Red,
-                Weight = 10,
-                Size = new Size(23, 23)
-            };
+            Apple red_apple, green_apple;
+            var tracker = new ClassTracker<Apple>();
 
-            Apple green_apple = new Apple()
+            // Create our apples
+            green_apple = new Apple()
             {
                 Color = Color.Green,
-                Weight = 1,
-                Size = new Size(57, 57)
+                Weight = 10,
+                Size = new Size(50, 50)
+            };
+            red_apple = new Apple()
+            {
+                Color = Color.Green,
+                Weight = 10,
+                Size = new Size(50, 50)
             };
 
             // Register the state of red apple's marked members
-            // (usually called from within the object)
-            red_apple.Tracker.Register(red_apple);
+            tracker.Register(red_apple);
+
+            // Mutate our red_apple into a small red apple
+            red_apple.Color = Color.Red;
+            red_apple.Weight = 1;
+            red_apple.Size = new Size(5, 5);
 
             // print state of the red apple
             Console.WriteLine($"Red Apple:\n\tColor - {red_apple.Color}\n\tWeight - {red_apple.Weight}\n\tSize - {red_apple.Size}");
@@ -34,9 +41,15 @@ namespace ClassTracker.Examples
 
             Console.WriteLine("-------------------");
 
-            Console.WriteLine("Applying the tracked state of the Red Apple to Green Apple...");
+            Console.WriteLine("Whats changed in Red Apple...");
+            foreach(var (name, _) in tracker.CheckChanged(red_apple))
+            {
+                Console.WriteLine(name);
+            }
+
+            Console.WriteLine("\nApplying the tracked state of the Red Apple to Green Apple...");
             // copy the tracked values over to green apple
-            red_apple.Tracker.AddTo(red_apple, green_apple);
+            tracker.AssignTo(red_apple, green_apple);
 
             // print state of the red apple
             Console.WriteLine($"Red Apple:\n\tColor - {red_apple.Color}\n\tWeight - {red_apple.Weight}\n\tSize - {red_apple.Size}");
@@ -47,8 +60,6 @@ namespace ClassTracker.Examples
 
     class Apple
     {
-        public ClassTracker<Apple> Tracker;
-
         // Tracked property
         [TrackedItem]
         public Color Color { get; set; }
@@ -59,11 +70,6 @@ namespace ClassTracker.Examples
         
         // Non-Tracked field
         public Size Size;
-
-        public Apple()
-        {
-            Tracker = new ClassTracker<Apple>();
-        }
     }  
 
 }
