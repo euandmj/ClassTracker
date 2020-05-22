@@ -8,7 +8,8 @@ a mini lightweight experimental project. Aims to provide a easy to use framework
 ## Usage
   See the [Examples](https://github.com/euandmj/ClassTracker/tree/master/Examples) project for more details
   
-### Mark your object members with the TrackedItem attribute. Applies to mutable public/private/protected/internal Properties/Fields
+### Mark your object members with the TrackedItem attribute.
+##### Applies to mutable public/private/protected/internal Properties/Fields
 
         class Apple
         {
@@ -24,13 +25,18 @@ a mini lightweight experimental project. Aims to provide a easy to use framework
             public Size Size;
         }
 
-### Register an instance of an object with (A MemberInfoException will be thrown for non readonly/const members)
+### Register an instance of an object with 
+##### A MemberInfoException will be thrown for non readonly/const members
     
         ClassTracker<T>.Register(T obj)
 
 ### Assign the changed values of A to B
 
         ClassTracker<T>.AssignTo(T a, T b)
+### Assign the tracked values from A to B irrelevant of their changed status
 
+        ClassTracker<T>.BlindAssignTo(T a, T b)
+### Reset an instance to the values that are Recorded
+        ClassTracker<T>.ResetDefaults(T obj)
 
 
