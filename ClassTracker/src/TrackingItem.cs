@@ -11,7 +11,7 @@ namespace ClassTracker
         protected BindingFlags BindingFlags = BindingFlags.Instance | BindingFlags.Public;
         protected MemberInfo Info { get; }
         public string Name { get => Info.Name; }
-        public object RecordedValue { get; }
+        public object? RecordedValue { get; }
 
         public TrackingItem(T src, MemberInfo info)
         {
@@ -84,5 +84,7 @@ namespace ClassTracker
         }
 
         public override int GetHashCode() => Name.GetHashCode();
+
+        public override bool Equals(object? obj) => obj.GetHashCode() == this.GetHashCode();
     }
 }

@@ -18,11 +18,8 @@ namespace ClassTracker
 
         public int TrackedCount { get => _properties.Count; }
 
-        protected void AddItem(string name, TrackingItem<T> item)
+        protected void AddItem(TrackingItem<T> item)
         {
-            if (_properties.Contains(item))
-                throw new ArgumentException("multiple items of the same name are not supported. Name: " + name, nameof(name));
-
             _properties.Add(item);
         }
 
@@ -50,14 +47,14 @@ namespace ClassTracker
             foreach (var mem in typeof(T).GetMembers())
             {
                 if (mem.HasAttribute<TrackedItemAttribute>())
-                    AddItem(mem.Name, new TrackingItem<T>(obj, mem));
+                    AddItem(new TrackingItem<T>(obj, mem));
             }
 
             // add private members
             foreach (var mem in typeof(T).GetMembers(_privateFlags))
             {
                 if (mem.HasAttribute<TrackedItemAttribute>())
-                    AddItem(mem.Name, new TrackingItem<T>(obj, mem, _privateFlags));
+                    AddItem(new TrackingItem<T>(obj, mem, _privateFlags));
             }
         }
 
