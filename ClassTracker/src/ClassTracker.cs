@@ -8,7 +8,8 @@ namespace ClassTracker
 {
     public class ClassTracker<T>
     {
-        private readonly HashSet<TrackingItem<T>> _properties;
+        protected BindingFlags _privateFlags = BindingFlags.Instance | BindingFlags.NonPublic;
+        protected readonly HashSet<TrackingItem<T>> _properties;
 
         public ClassTracker()
         {
@@ -17,15 +18,15 @@ namespace ClassTracker
 
         public int TrackedCount { get => _properties.Count; }
 
-        private void AddItem(string name, TrackingItem<T> item)
+        protected void AddItem(string name, TrackingItem<T> item)
         {
-            if (_properties.Any(x => x.Name == name))
+            if (_properties.Contains(item))
                 throw new ArgumentException("multiple items of the same name are not supported. Name: " + name, nameof(name));
 
             _properties.Add(item);
         }
 
-        private IEnumerable<(object newValue, TrackingItem<T>)> GetChanged(T obj)
+        protected IEnumerable<(object newValue, TrackingItem<T>)> GetChanged(T obj)
         {
             foreach (var item in _properties)
             {
@@ -45,8 +46,6 @@ namespace ClassTracker
             if(obj is null)
                 throw new ArgumentNullException(nameof(obj));
 
-            const BindingFlags privateFlags = BindingFlags.Instance | BindingFlags.NonPublic;
-
             // add public members
             foreach (var mem in typeof(T).GetMembers())
             {
@@ -55,10 +54,10 @@ namespace ClassTracker
             }
 
             // add private members
-            foreach (var mem in typeof(T).GetMembers(privateFlags))
+            foreach (var mem in typeof(T).GetMembers(_privateFlags))
             {
                 if (mem.HasAttribute<TrackedItemAttribute>())
-                    AddItem(mem.Name, new TrackingItem<T>(obj, mem, privateFlags));
+                    AddItem(mem.Name, new TrackingItem<T>(obj, mem, _privateFlags));
             }
         }
 
